@@ -43,7 +43,7 @@
 						<span style="display: flex; position: fixed; top: 2em; right: 2em; opacity: 0.65; font-size: 0.8em;"><button class="button small" @click="screenShot" id="screenshot">保存网页截图</button></span>
 						<span style="display: flex; position: fixed; top: 2em; left: 2em; opacity: 0.4;" v-if="backButton"><button class="button small" onclick="toIndex()"><a>&lt;返回</a></button></span>
 						<header>
-							<span class="avatar"><img src="images/avatar.jpg" alt="" style="width: 122px; height: 122px;" /></span>
+							<span class="avatar"><img src="images/avatar_b.webp" alt="" style="width: 122px; height: 122px;" /></span>
 							<h1>向 Someone 付款</h1>
 							<center class="mountPart" v-if="showAmount">
 								<b><span style="font-size: 3em; color: #25b684;">{{ intpart }}.</span><span style="font-size: 2.3em; color: #25b684;">{{ doublepart }}</span><span style="color: #fffff8; font-size: 2em;">元</span></b>
@@ -94,21 +94,21 @@
 								name:"Alipay",
 								icon:"icon brands fa-alipay",
 								desc:"支付宝",
-								content:"<img src=\"images/demoQR.png\" class=\"qr\" /><br /><h2><a href=\"alipayqr://platformapi/startapp?saId=10000007&qrcode=null\"><u>支付宝[点击即可打开]</u></a></h2>",
+								content:"<img src=\"images/wechat_pay_qr.jpg\" class=\"qr\" /><br /><h2><a href=\"alipayqr://platformapi/startapp?saId=10000007&qrcode=null\"><u>支付宝[点击即可打开]</u></a></h2>",
 								show: false
 							},
 							{
 								name:"Wechat",
 								icon:"icon brands fa-weixin",
 								desc:"微信支付",
-								content:"<img src=\"images/demoQR.png\" class=\"qr\" /><br /><h2>微信</h2>",
+								content:"<img src=\"images/wechat_pay_qr.jpg\" class=\"qr\" /><br /><h2>微信</h2>",
 								show:false
 							},
 							{
 								name:"QQ",
 								icon:"icon brands fa-qq",
 								desc:"QQ钱包",
-								content:"<img src=\"images/demoQR.png\" class=\"qr\" /><br /><h2>QQ钱包</h2>",
+								content:"<img src=\"images/wechat_pay_qr.jpg\" class=\"qr\" /><br /><h2>QQ钱包</h2>",
 								show:false
 							}
 						],

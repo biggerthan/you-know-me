@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>感谢您的关注！</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript
+      ><link rel="stylesheet" href="assets/css/noscript.css"
+    /></noscript>
+    <script src="js/vue.min.js" language="JavaScript"></script>
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="js/html2canvas.min.js" async="async"></script>
+    <style>
+      img {
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+
+  <body class="is-preload">
+    <!-- Loader -->
+    <link rel="stylesheet" href="assets/css/loader.css" />
+    <div class="loader">
+      <div class="container">
+        <h1>🖥️</h1>
+        <p>马上</p>
+        <p>就来</p>
+      </div>
+    </div>
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+      <!-- Main -->
+      <section id="main">
+        <!-- Screenshot Button -->
+        <span
+          style="
+            display: flex;
+            position: fixed;
+            top: 2em;
+            right: 2em;
+            opacity: 0.65;
+            font-size: 0.8em;
+          "
+          v-show="false"
+          ><button class="button small" @click="screenShot" id="screenshot">
+            保存网页截图
+          </button></span
+        >
+
+        <!-- Welcome Message and Contacts -->
+        <section 
+          :style="{
+            'opacity': onTransition == 1 ? 0:1,
+            '-webkit-transition': onTransition ? 'all 0.5s linear':'all 0.5s linear',
+            'transition': onTransition ? 'all 0.5s linear':'all 0.5s linear'
+            }"
+          >
+          <header v-show="Contacts">
+            <span class="avatar"
+              ><img
+                src="images/avatar_b.webp"
+                alt=""
+                style="width: 122px; height: 122px"
+            /></span>
+            <h1>程序员 Shawn</h1>
+            <transition-group name="fade">
+              <div v-show="defaults" key="text">
+                <p>您好：</p>
+                <p>
+                  我是一名拥有多年开发经验的 iOS 工程师。
+                </p>
+                <p>
+                  技术栈：
+                  OC、Swift当然不在话下了；
+                  另外我还会 Flutter 混编；
+                  Vue/React 框架下开发网页和小程序；
+                  Python 脚本和爬虫；
+                </p>
+                <p>
+                  工作经历：
+                  曾担任创业型公司主程开发，独立开发维护教育类产品；
+                  前流利说资深 iOS 开发工程师，担任大型需求负责人，负责项目推进，基础框架搭建等；
+                </p>
+                <p>
+                  如果您还感兴趣，接着往下看吧！
+                </p>
+                <button
+                  class="button small fit"
+                  @click="showAbout"
+                  v-bind:disabled="onTransition==1"
+                >
+                  点我一下！
+                </button>
+              </div>
+              <div
+                v-for="item in contacts"
+                v-if="item.show"
+                key="item.name"
+                v-html="item.content"
+              ></div>
+              <button
+                class="button small"
+                key="button"
+                @click="hideContact(true)"
+                style="opacity: 0.55"
+                v-show="backButton"
+              >
+                返回
+              </button>
+            </transition-group>
+          </header>
+          <hr />
+          <footer v-show="Contacts && !backButton">
+            <ul class="icons">
+              <li v-for="item in contacts">
+                <a @click="showContact(item.name)" :class="item.icon"
+                  >{{item.desc}}</a
+                >
+              </li>
+            </ul>
+          </footer>
+        </section>
+        
+        <!-- Page container -->
+        <header v-show="info">
+          <div
+            name="fade" 
+            class="opacity-group"
+            :style="{
+              'opacity': onTransition == 1 ? 0:1,
+              '-webkit-transition': onTransition ? 'all 0.5s linear':'all 0.5s linear',
+              'transition': onTransition ? 'all 0.5s linear':'all 0.5s linear'
+              }"
+            >
+            <h1 key="title">{{ title }}</h1>
+            <p key="text" v-for="(text,index) in texts" v-bind:key="index">{{ text }}</p>
+            <div v-html="html" key="html"></div>
+            <img
+              v-bind:src="img"
+              style="width: 95%; height: auto;"
+              v-for="(img,index) in imgs"
+              v-bind:key="img"
+            />
+            <div key="buttons">
+              <button
+                class="button small"
+                v-bind:disabled="(nowPage < startPage || onTransition==1)"
+                @click="navigate(-1)"
+              >
+                上一页
+              </button>
+              <button
+                class="button small"
+                v-bind:disabled="(nowPage >= endPage - 2 || onTransition==1)"
+                @click="navigate(1)"
+              >
+                下一页
+              </button>
+            </div>
+            <hr key="br" />
+            <button
+              @click="returnToContact"
+              key="button"
+              class="button fit"
+              v-bind:disabled="onTransition==1"
+            >
+              返回
+            </button>
+          </transition-group>
+        </header>
+      </section>
+
+      <!-- Footer -->
+      <footer id="footer"></footer>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+      if ("addEventListener" in window) {
+        window.addEventListener("load", function () {
+          document.body.className = document.body.className.replace(
+            /\bis-preload\b/,
+            ""
+          );
+        });
+        document.body.className += navigator.userAgent.match(/(MSIE|rv:11\.0)/)
+          ? " is-ie"
+          : "";
+      }
+    </script>
+    <!-- Vuejs -->
+    <script language="javascript">
+      var mainsec = new Vue({
+        el: "#main",
+        data: {
+          title: "", // The title of one page
+          html: "", // HTML text of one page
+          texts: [], // Pure texts of one page
+          imgs: [], // Image url of a page's images
+
+          startPage: 0, // First page of the website
+          endPage: 0, // The last page of the website
+
+          defaults: 1, // Show welcome message
+          Contacts: 1, // Detect if to show contacts
+          info: 0, // If to show designed pages
+          deg: 0, // Main section rotate deg
+
+          backButton: false,
+
+          /*          Change things below this line               */
+          //Contact info
+          /**
+           * 有关下方icon的优化
+           * 因下方icon可以挂上用户自己的站点，所以做了如下修改
+           * jump为true，会直接跳转链接，链接为用户自定义的content字段
+           * jump为false，则是与原来一样。
+           */
+          contacts: [
+            {
+              name: "Wechat",
+              icon: "icon brands fa-weixin",
+              desc: "微信",
+              content: "<img src='images/wechat_qr.jpg' class='qr' />",
+              show: false,
+              jump: false,
+            },
+            // {
+            //   name: "QQ",
+            //   icon: "icon brands fa-qq",
+            //   desc: "QQ",
+            //   content:
+            //     "<img src='images/wechat_qr.jpg' class='qr' /><h2>QQ:XXXXXX</h2>",
+            //   show: false,
+            //   jump: false,
+            // },
+            // {
+            //   name: "Github",
+            //   icon: "icon brands fa-github",
+            //   desc: "Github",
+            //   content: "https://github.com/Jiaocz/Personal-page",
+            //   show: false,
+            //   jump: true,
+            // },
+          ],
+
+          //Pages content
+          page: [
+            {
+              title: "考拉优教",
+              texts: [
+                "考拉优教是一款教育类产品，主打音视频售卖，使用 OC 和 Swift 混合开发，我在此期间担任主程，独立开发 iOS 端。",
+                "核心功能音视频部分是基于 AVAudio、AVPlayer 等相关 api 进行开发，其他功能技术点包括：Webview 与原生交互、AFNetwork/Alamofire、SDWebImage、FMDB、ReactiveCocoa (OC 和 Swift) 响应式系列框架等主流第三方库的使用。",
+                "但是由于时间久远，项目服务器已经关闭，下面是部分截图：",
+              ],
+              html: "",
+              imgs: [
+                /*
+                 图床生成 https://imgloc.com/
+                */
+                "https://i.328888.xyz/2023/04/19/iFwX6P.png",
+                "https://i.328888.xyz/2023/04/19/iFwgQX.jpeg",
+                "https://i.328888.xyz/2023/04/19/iFw7lt.jpeg",
+              ],
+            },
+            {
+              title: "LingoChamp",
+              texts: [
+                "LingoChamp 是一款海外教育产品，核心功能是自研课程、自研题型，使用 Flutter、OC、Swift 三种语言混合开发。页面基本上都是基于 Flutter Widget、Provider、Method Channels 开发。其他涉及技术有 Protobuf、Pigeon、Retrofit、JsonSerializable、SharedPreference 等。",
+                 "下面是部分截图，有兴趣的可以下载试试看哦：",
+                ],
+              html: '<a target="_blank" href="https://www.lingochamp.world/zh-cn" style="font-size:1em; color:#333333; padding: 0.2em; cursor: pointer;"><<u>官网介绍</u>></a><br /><p style="font-size:1em;"><p>',
+              imgs: [
+                "https://i.328888.xyz/2023/04/19/iFwEgJ.png",
+                "https://i.328888.xyz/2023/04/19/iFweLc.png",
+                "https://i.328888.xyz/2023/04/19/iFw6nA.jpeg",
+                "https://i.328888.xyz/2023/04/19/iFwFRo.png",
+                "https://i.328888.xyz/2023/04/19/iFwGoN.jpeg",
+              ],
+            },
+            {
+              title: "小程序",
+              texts: [
+                "基于 Taro 框架的微信小程序，目前也能只能体验游客模式了",
+                 "下面是部分截图，有兴趣的可以体验下哦：",
+                ],
+              html: '<a target="_blank" href="https://wxaurl.cn/KtQufYx3jrv" style="font-size:1em; color:#333333; padding: 0.2em; cursor: pointer;"><<u>金豆大作战</u>></a><br /><p style="font-size:1em;"><p>',
+              imgs: [
+                "https://i.328888.xyz/2023/04/19/iFOPsA.jpeg",
+                "https://i.328888.xyz/2023/04/19/iFOMcc.jpeg",
+              ],
+            },
+            {
+              title: "我会什么？",
+              texts: [
+                "OC 和 Swift：熟悉 runloop、runtime、block 等技术点基本原理和常用 api 的使用。熟练使用常用原生库和第三方库等，熟悉 UITableView 列表优化、包体积优化、启动速度优化、内存优化等，熟练使用 MVC、MVVM 开发模式，熟练使用工厂模式、单利模式、观察者模式、通知模式等，熟悉 git 操作、gitlab CI/CD 集成、cocoapods 等。",
+                "Flutter：了解 flutter 底层框架、页面渲染原理、通信原理等，熟练使用各种 Widget 和 flutter 语言特性。",
+                "Vue/React：开发过多个小程序，网页。熟悉 Taro 框架、React hooks Redux 等、常用库 echarts、styledComponent 等，熟悉 css 方案 lass、sass 等，熟悉 Type Script。",
+                "Python：可开发工作效率类脚本、爬虫脚本等。",
+                "工具部分：charles、vscode、postman、Fork、SourceTree、Image Optimz 等。",
+                "协作平台部分：Tower、Jira、Wiki、Confluence 等。",
+              ],
+              imgs: [],
+              html: "",
+            },
+            {
+              title: "我能做什么？",
+              texts: [
+                "iOS 原生端 APP 开发",
+                "Flutter 跨端 APP 开发",
+                "小程序开发",
+                "网页开发",
+              ],
+              imgs: [],
+              html: "",
+            },
+            {
+              title: "说明",
+              texts: [
+                "此站点仅为个人简历的在线版本，若想了解更加详细的个人资料和工作亮点业绩可在首页获取我的微信，联系我！",
+                "产品介绍中，如果截图涉及到隐私的部分，也可联系我删除！",
+                "如果我现在对你，或者将来对你有一些帮助，点击下方打赏吧！~~",
+              ],
+              html: '<a onclick="todonate()" style="font-size:1.5em; color:#fff; background-color:#f0a1a8; border-radius: 0.3em; padding: 0.2em; cursor: pointer;"><<u>感谢!</u>></a><br /><p style="color:#ccc; font-size:1em;"><p>',
+              imgs: [],
+            },
+          ],
+          /*            Change ends here                 */
+
+          nowPage: 0, // Pointer to current page
+          onTransition: 0, //If the transition animation is on
+        },
+        methods: {
+          showContact: function (name) {
+            let num = 0;
+            for (let i = 0; i < this.contacts.length; i++) {
+              if (this.contacts[i].name == name) {
+                num = i;
+                break;
+              }
+            }
+            if (this.contacts[num].jump == true) {
+              window.open(this.contacts[num].content);
+              return;
+            }
+            this.hideContact(false);
+            this.defaults = 0;
+            clearTimeout(this.timer);
+            this.timer = setTimeout(() => {
+              this.contacts[num].show = true;
+              this.backButton = true;
+            }, 500);
+          },
+          hideContact: function (neededDefault = true) {
+            for (i = 0; i < this.contacts.length; i++) {
+              this.contacts[i].show = false;
+            }
+            clearTimeout(this.timer);
+            if (neededDefault == true) {
+              this.backButton = false;
+              this.timer = setTimeout(() => {
+                this.defaults = 1;
+              }, 500);
+            }
+          },
+          showAbout: function () {
+            window.scrollTo(0,0);
+            var that = this;
+            this.rotateCard(-180, 0.5, "Y", function () {
+              that.info = 1;
+              that.Contacts = 0;
+              that.nowPage = 0;
+              mainsec.loadPage()
+            });
+          },
+          returnToContact: function () {
+            window.scrollTo(0,0);
+            var that = this;
+            this.rotateCard(180, 0.5, "Y", function () {
+              that.info = 0;
+              that.Contacts = 1;
+            });
+          },
+          rotateCard: function (deg, time, axis, callback) {
+            this.onTransition = 1;
+            this.deg += deg;
+            var ele = document.getElementById("main");
+            ele.style.transition = "transform " + time + "s 0s";  
+            ele.style.webkitTransition = "all " + time + "s 0s";
+            // 翻转在页面过长时会拉伸页面，暂时注释
+            // ele.style.transform = "rotate" + axis + "(" + this.deg + "deg)";
+            var that = this;
+            // 翻转结束
+            setTimeout(function () {
+              var degs = deg < 0 ? -180: 180;
+              that.deg += degs;
+              ele.style.transition = "none"; 
+              // 翻转在页面过长时会拉伸页面，暂时注释
+              // ele.style.transform = "rotate" + axis + "(" + that.deg + "deg)";   
+            }, time * 1000);
+            // 现场还原
+            setTimeout(() => {
+                ele.style.transition = "all 0.5s linear"; 
+                ele.style.webkitTransition = "all 0.5s linear";
+                if (typeof callback == Function || typeof callback == "function") {
+                    callback();
+                }
+                that.onTransition = 0;
+              }, time * 1000 + 100);
+          },
+          loadPage: function () {
+            this.title = this.page[this.nowPage].title;
+            this.texts = this.page[this.nowPage].texts;
+            this.html = this.page[this.nowPage].html;
+            this.imgs = this.page[this.nowPage].imgs;
+          },
+          navigate: function (m) {
+            if (m == 1) {
+              this.nowPage++;
+              window.scrollTo(0,0);
+              this.rotateCard(-180, 0.5, "Y", function () {
+                mainsec.loadPage();
+              });
+            }
+            if (m == -1) {
+              this.nowPage--;
+              window.scrollTo(0,0);
+              this.rotateCard(+180, 0.5, "Y", function () {
+                mainsec.loadPage();
+              });
+            }
+          },
+          screenShot: function () {
+            var button = document.getElementById("screenshot");
+            button.disabled = true;
+            button.innerHTML = "截图中…";
+            html2canvas(document.body).then((canvas) => {
+              var w = window.open();
+              w.document.title = "保存截图";
+              var i = w.document.createElement("img");
+              w.document.body.appendChild(i);
+              i.src = canvas.toDataURL("image/jpg");
+              w.alert("长按图片或直接保存图片即可");
+              button.innerHTML = "保存网页截图";
+              button.disabled = false;
+            });
+          },
+        },
+        mounted: function () {
+          this.loadPage();
+          this.startPage = 1;
+          this.endPage = this.page.length + 1;
+        },
+      });
+    </script>
+    <style>
+      .fade-enter-active,
+      .fade-leave-active {
+        -webkit-transition: all 0.2s;
+        transition: all 0.2s;
+      }
+      .fade-enter,
+      .fade-leave-to {
+        opacity: 0;
+        transform: scale(0%, 0%);
+      }
+      .qr {
+        text-align: center;
+        width: 80%;
+        height: 80%;
+      }
+    </style>
+    <script>
+      let FirstTriggered = true;
+      function loaded() {
+        timeout = FirstTriggered ? 1200 : 0;
+        var page = getQueryVariable("page");
+        if (page >= mainsec.startPage && page <= mainsec.endPage && page) {
+          var m = mainsec;
+          mainsec.nowPage = page - 1;
+          setTimeout(function () {
+            m.rotateCard(-180, 0.5, "Y", function () {
+              m.loadPage();
+              m.info = 1;
+              m.Contacts = 0;
+            });
+          }, timeout);
+        }
+        if (FirstTriggered) {
+          $("body").on("dblclick", "img", function () {
+            window.open(this.src);
+          });
+        }
+        if (
+          getQueryVariable("showContacts") ||
+          getQueryVariable("showcontacts")
+        ) {
+          var url;
+          var browser = navigator.userAgent.toLowerCase();
+          if (mainsec.info == 1) {
+            mainsec.returnToContact();
+          }
+          if (browser.match(/MicroMessenger/i) == "micromessenger") {
+            //微信浏览器
+            url = "https://u.wechat.com/EO3JtzoXctOZXiAG8tvYHuI";
+            setTimeout(function () {
+              mainsec.showContact("Wechat");
+            }, 1500);
+          } else if (
+            browser.indexOf(" qq") != -1 &&
+            browser.indexOf("mqqbrowser") != -1
+          ) {
+            //qq内置浏览器
+            url =
+              "https://qm.qq.com/cgi-bin/qm/qr?k=OZm0covTGqrELIwI0XKV6LxlKsCcLIsm";
+            setTimeout(function () {
+              mainsec.showContact("QQ");
+            }, 1500);
+          }
+        }
+
+        FirstTriggered = false;
+      }
+    </script>
+    <script src="js/common.js"></script>
+  </body>
+</html>

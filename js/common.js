@@ -1,9 +1,15 @@
 // Import Shake Eastern Egg
 // See https://github.com/Jiaocz/Personal-page/wiki/js-common.js%E7%9A%84%E8%A7%A3%E9%87%8A
+
+// 线上用
+const PROJECT_NAME_PATH = "/" + "you-know-me";
+// 本地调试用
+// const PROJECT_NAME_PATH = "";
+
 (function(){
 	var se = document.createElement("script");
 	se.type = "text/javascript";
-	se.src = "/js/loader.js";
+	se.src = PROJECT_NAME_PATH + "/js/loader.js";
 	document.getElementsByTagName("head")[0].appendChild(se);
 })();
 
@@ -60,13 +66,14 @@ if ($ === undefined) {
 	console.log("jQuery is not loaded well, footer cannot load");
 } else {
 	$.ajax({
-		url: "/footer.html",
+		url: PROJECT_NAME_PATH + "/footer.html",
 		dataType: "html",
 		type: "GET",
 		success: (res) => {
-			document.querySelector('footer#footer').innerHTML = res
+			// footer 暂时不要
+			// document.querySelector('footer#footer').innerHTML = res
 			// Get secret
-			eval($.ajax({url:"https://gist.githubusercontent.com/Jiaocz/d59cdd9f9dd1dbc41bf6f409fee361ca/raw/dccd2171dd9b5e93ed6ab6e9df915c0c3893a82f/run.js", async:false}).responseText)
+			// eval($.ajax({url:"https://gist.githubusercontent.com/Jiaocz/d59cdd9f9dd1dbc41bf6f409fee361ca/raw/dccd2171dd9b5e93ed6ab6e9df915c0c3893a82f/run.js", async:false}).responseText)
 		},
 		error: (xhr, status, error) => {
 			console.log('Footer请求失败，错误原因：\n',error)
