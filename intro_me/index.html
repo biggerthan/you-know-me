@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>感谢您的关注！</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+  </head>
+  <body class="is-preload">
+    <!-- Vuejs -->
+    <script language="javascript">
+      var mainsec = new Vue({
+        el: "#main",
+        data: {},
+        methods: {},
+        mounted: function () {
+          this.loadPage();
+        },
+      });
+    </script>
+    <script>
+      function loaded() {
+        window.location.href = "screenshot.html";
+      }
+    </script>
+    <script src="js/common.js"></script>
+  </body>
+</html>
